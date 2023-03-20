@@ -31,7 +31,7 @@ class point3d
 			z += dist;
 		}
 	}
-	public void len_rad_vec()
+	public double len_rad_vec()
     {
 		Console.WriteLine($"Длина радиус-вектора, считая от начала координат {Math.Sqrt(x*x+y*y+z*z)}");
     }
@@ -49,7 +49,7 @@ class Program
 		int a;
 		Console.WriteLine("Введите 0, если хотите создать объект в нулевых координатах, и любое другое число , чтобы ввести конкретные координаты");
 		a = int.Parse(Console.ReadLine());
-		point3d pos1 = new point3d();
+		point3d pos1;
 		if (a == 0)
 			{ 
 			pos1 = new point3d(); 
