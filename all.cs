@@ -1,4 +1,5 @@
 using System;
+
 class point3d
 {
 	public int x;
@@ -21,8 +22,10 @@ class point3d
 		int j = 1;
 		this.x = (int) x1;
 		int y = 0;
-		while (x1 > 1)
+		int rem = (int)x1 - x1;
+		while (rem >= 0)
         {
+			rem = rem*10 - (int)(rem*10);
 			j++;	
         }
 		x1 *= (decimal)Math.Pow(10, j);
@@ -102,7 +105,7 @@ class point3d
     {
 		get
         {
-			if (x >= 10)
+			if (x <= 10)
             {
 				if (y >= 2)
                 {
@@ -112,6 +115,26 @@ class point3d
 			return false;
         }
     }
+    public  point3d point (point3d point){
+		point3d point3;
+		int x = point.x + this.x;
+		int y = point.y + this.y;
+		int z = point.z + this.z;
+		point3 = new point3d(x,y,z);
+		return point3;
+		}
+	public void point(int xp, int yp, int zp){
+		this.x += xp;
+		this.y += yp;
+		this.z += zp;
+		
+		}
+	public void point(int par){
+		
+		this.x += par;
+		this.y += par;
+		this.z += par;
+		}
 }
 class Program
 {
@@ -178,13 +201,10 @@ class Program
 					Console.WriteLine("Точка находится в зоне, ограниченной треугольником:");
                     else Console.WriteLine("Точка не находится в зоне, ограниченной треугольником:");
 					break;
-				case 7:
 
-					break;
 			}
 			pos1.showpos();
-
-			pos1.showpos();
+			req = int.Parse(Console.ReadLine());
 			
 		}
 	}
