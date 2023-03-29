@@ -1,5 +1,4 @@
 using System;
-
 class point3d
 {
 	public int x;
@@ -19,18 +18,18 @@ class point3d
 	}
 	public point3d(decimal x1)
 	{
-		int j = 1;
-		this.x = (int) x1;
+		int j = -1; // счетчик степени десятки
+		this.x = (int) x1; // х - целая часть ее мы получаем , преобразовывая дробное число в целое
 		int y = 0;
-		int rem = (int)x1 - x1;
-		while (rem >= 0)
+		decimal rem = x1 -(int)x1; // находим дробную часть
+		while (rem > 0) // дальше находим длину дробной части, перекидывая каждое число из дробной части в целое и отрезая его
         {
-			rem = rem*10 - (int)(rem*10);
+			rem *= 10;
+			rem %= 10;
 			j++;	
         }
-		x1 *= (decimal)Math.Pow(10, j);
-		this.y = (int)x1;
-		this.z = 0;
+		this.y =(int)((x1 - (int)x1) * (int)Math.Pow(10, j));  // а дальше умножаем дробную часть на 10 в степени длины дробной части
+		this.z = 0; 
 	}
 	public void move(char axis, int dist)
 	{
@@ -49,11 +48,11 @@ class point3d
 	}
 	public string len_rad_vec()
 	{
-		return $"Длина радиус-вектора, считая от начала координат {Math.Sqrt(x * x + y * y + z * z)}";
+		return $"Длина радиус-вектора, считая от начала координат {Math.Round(Math.Sqrt(x * x + y * y + z * z), 4)}";
 	}
-	public string showpos()
+	public string showpos(point3d obj)
 	{
-		return $"Объект  находитесь на координатах: x: {x} y:{y} z:{z}";
+		return $"Объект  находитесь на координатах: x: {obj.x} y:{obj.y} z:{obj.z}";
 	}
 	public int X
 	{
@@ -115,26 +114,27 @@ class point3d
 			return false;
         }
     }
-    public  point3d point (point3d point){
-		point3d point3;
-		int x = point.x + this.x;
-		int y = point.y + this.y;
-		int z = point.z + this.z;
-		point3 = new point3d(x,y,z);
-		return point3;
-		}
-	public void point(int xp, int yp, int zp){
+	public point3d point_move(point3d point) // сложение координат той точки с которой работаем + координат точки которую передают в кач. параметра в координаты новой 
+	{
+		point3d newpoint;
+		int x_new= x + point.x;
+		int y_new = y + point.y;
+		int z_new =z + point.z;
+		newpoint = new point3d(x_new, y_new, z_new);
+		return newpoint;
+	}
+	public void point_move(int xp, int yp, int zp)
+    {
 		this.x += xp;
 		this.y += yp;
 		this.z += zp;
-		
-		}
-	public void point(int par){
-		
-		this.x += par;
-		this.y += par;
-		this.z += par;
-		}
+    }
+	public void point_move(int param) {
+		this.x += param;
+		this.y += param;
+		this.z += param;
+
+	}
 }
 class Program
 {
@@ -143,8 +143,10 @@ class Program
 	public static void Main()
 	{
 		int a;
-		Console.WriteLine("Введите 0, если хотите создать объект в нулевых координатах, 1, если хотите указать х и у, и любое другое число , чтобы ввести конкретные координаты");
+		Console.WriteLine("Введите 0, если хотите создать объект в нулевых координатах, 1, если хотите указать х и у с помощью дробного числа, и любое другое число , чтобы ввести конкретные координаты каждой из осей");
 		a = int.Parse(Console.ReadLine());
+		point3d pos2 = new point3d(1, 5, 87); // создаем точки для "корма" ( последние перегруженные метода третьей части практики)
+		point3d pos3 = new point3d(4, 6, -15);
 		point3d pos1;
 		if (a == 0)
 		{
@@ -166,46 +168,90 @@ class Program
 			int z1 = int.Parse(Console.ReadLine());
 			pos1 = new point3d(x1, y1, z1);
 		}
+		Console.WriteLine("СПИСОК КОМАНД:");
+		Console.WriteLine("0 если хотите подвинуть закончить работу с программой");
+		Console.WriteLine("1 если хотите подвинуть объект по конкретной оси");
+		Console.WriteLine("2 если хотите найти длину радиус вектора");
+		Console.WriteLine("3 если хотите пометь значение Х");
+		Console.WriteLine("4 если хотите пометь значение У");
+		Console.WriteLine("5 если хотите пометь значение Z");
+		Console.WriteLine("6 если хотите проверить, находится ли точка в закрашенной зоне");
+		Console.WriteLine("7 если хотите создать точку из суммы двух других");
+		Console.WriteLine("8 если хотите изменить кординаты точки на координаты другой");
+		Console.WriteLine("9 если хотите подвинуть объект по всем осям на конкретное значение");
+		Console.WriteLine("_________________________");
+
 		int req = int.Parse(Console.ReadLine());
-		while (req != 0)
-		{
+        while (req != 0)
+        {
+			Console.WriteLine(pos1.showpos(pos1));
 			switch (req)
             {
-				case 1:
-					Console.WriteLine("Введите ось, по которой нужно подвинуть объект");
-					char b = Char.Parse(Console.ReadLine());
-					while (!"xyz".Contains(b))
-						Console.WriteLine("Ось может только: x y или z");
-					b = Char.Parse(Console.ReadLine());
-					Console.WriteLine("Введите насколько надо подвинуть объект");
-					int c = int.Parse(Console.ReadLine());
-					pos1.move(b, c);
+                case 1:
+                    Console.WriteLine("Введите ось, по которой нужно подвинуть объект");
+                    char b = Char.Parse(Console.ReadLine());
+                    while (!"xyz".Contains(b))
+                        Console.WriteLine("Ось может только: x y или z");
+                    Console.WriteLine("Введите насколько надо подвинуть объект");
+                    int c = int.Parse(Console.ReadLine());
+                    pos1.move(b, c);
+                    break;
+                case 2:
+                    Console.WriteLine(pos1.len_rad_vec());
+                    break;
+                case 3:
+                    Console.WriteLine("Введите , чему теперь равен Х");
+                    pos1.X = int.Parse(Console.ReadLine());
+                    break;
+                case 4:
+                    Console.WriteLine("Введите , чему теперь равен Y");
+                    pos1.Y = int.Parse(Console.ReadLine());
+                    break;
+                case 5:
+                    Console.WriteLine("Введите , чему теперь равен Z");
+                    pos1.Z = int.Parse(Console.ReadLine());
+                    break;
+                case 6:
+                    if (pos1.inzone)
+                        Console.WriteLine("Точка находится в зоне, ограниченной треугольником");
+                    else Console.WriteLine("Точка не находится в зоне, ограниченной треугольником");
+                    break;
+                case 7:
+					Console.WriteLine("Создана новая точка с координатами равными сумме координат двух других");
+					point3d point4 = pos1.point_move(pos2);
+					Console.WriteLine("Ее координаты равны" + pos1.showpos(point4));
+
 					break;
-				case 2:
-					Console.WriteLine(pos1.len_rad_vec());
+				case 8:
+					Console.WriteLine("Координаты точки, на которые мы будем сдвигать:");
+					Console.WriteLine(pos1.showpos(pos3));
+
+					Console.WriteLine("Точка подвинута на координаты другой точки");
+
+					pos1.point_move(pos3.x, pos3.y, pos3.z);
 					break;
-				case 3:
-					Console.WriteLine("Введите , чему теперь равен Х");
-					pos1.X = int.Parse(Console.ReadLine());
+				case 9:
+					Console.WriteLine("Введите параметр, на который увеличатся все координаты");
+					int par = int.Parse(Console.ReadLine());
+					pos1.point_move(par);
 					break;
-				case 4:
-					Console.WriteLine("Введите , чему теперь равен Y");
-					pos1.Y = int.Parse(Console.ReadLine());
+				case 0:
 					break;
-				case 5:
-					Console.WriteLine("Введите , чему теперь равен Z");
-					pos1.Z = int.Parse(Console.ReadLine());
-					break;
-				case 6:
-					if (pos1.inzone)
-					Console.WriteLine("Точка находится в зоне, ограниченной треугольником:");
-                    else Console.WriteLine("Точка не находится в зоне, ограниченной треугольником:");
+				default:
+					Console.WriteLine("НЕИЗВЕСТНАЯ КОМАНДА");
 					break;
 
 			}
-			pos1.showpos();
+			Console.WriteLine("_________________________");
+			Console.WriteLine(pos1.showpos(pos1));
+			Console.WriteLine("_________________________");
+
+			Console.Write("Введите команду:");
 			req = int.Parse(Console.ReadLine());
+
 			
+
+
 		}
 	}
 }
