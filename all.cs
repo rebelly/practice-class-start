@@ -6,9 +6,9 @@ class point3d
 	public int z;
 	public point3d()
 	{
-		this.x = 0;
+		this.x = 5;
 		this.y = 0;
-		this.z = 0;
+		this.z = 4;
 	}
 	public point3d(int x1, int y1, int z1)
 	{
@@ -19,18 +19,38 @@ class point3d
 	public point3d(decimal x1)
 	{
 		int j = -1; // счетчик степени десятки
-		this.x = (int) x1; // х - целая часть ее мы получаем , преобразовывая дробное число в целое
+		this.x = (int)x1; // х - целая часть ее мы получаем , преобразовывая дробное число в целое
 		int y = 0;
-		decimal rem = x1 -(int)x1; // находим дробную часть
+		decimal rem = x1 - (int)x1; // находим дробную часть
 		while (rem > 0) // дальше находим длину дробной части, перекидывая каждое число из дробной части в целое и отрезая его
-        {
+		{
 			rem *= 10;
 			rem %= 10;
-			j++;	
-        }
-		this.y =(int)((x1 - (int)x1) * (int)Math.Pow(10, j));  // а дальше умножаем дробную часть на 10 в степени длины дробной части
-		this.z = 0; 
+			j++;
+		}
+		this.y = (int)((x1 - (int)x1) * (int)Math.Pow(10, j));  // а дальше умножаем дробную часть на 10 в степени длины дробной части
+		this.z = 0;
 	}
+	static void cool_class(int x, int y, int z)
+    {
+		point3d point;
+		bool end = false;
+		if (x % 5 == 0 || y % 5 == 0 || z % 5 == 0) { 
+			if (x > 0)
+            {
+				if (x+y > z)
+                {
+					point = new point3d(x, y, z);
+					end = true;
+                }
+            }
+		}
+		if (!end) { 
+			Console.WriteLine("Класс можно создать только если хоть одна из координат делится на 5, координат х положительна, а координат z не превосходит в сумме х и y");
+			point = new point3d();
+		}
+    }
+	
 	public void move(char axis, int dist)
 	{
 		if (axis == 'x')
@@ -90,46 +110,47 @@ class point3d
 	{
 		set
 		{
-			if (value <= x+y )
+			if (value <= x + y)
 			{
 				z = value;
 			}
 			else
 			{
-				Console.WriteLine($"Z должен принимать значения, меньшие чем сумма двумерных координат, в нашем случае это {x+y} ");
+				Console.WriteLine($"Z должен принимать значения, меньшие чем сумма двумерных координат, в нашем случае это {x + y} ");
 			}
 		}
 	}
 	public bool inzone
-    {
+	{
 		get
-        {
+		{
 			if (x <= 10)
-            {
+			{
 				if (y >= 2)
-                {
-					if (x <= y) { return true;  }
-                }
-            }
+				{
+					if (x <= y) { return true; }
+				}
+			}
 			return false;
-        }
-    }
+		}
+	}
 	public point3d point_move(point3d point) // сложение координат той точки с которой работаем + координат точки которую передают в кач. параметра в координаты новой 
 	{
 		point3d newpoint;
-		int x_new= x + point.x;
+		int x_new = x + point.x;
 		int y_new = y + point.y;
-		int z_new =z + point.z;
+		int z_new = z + point.z;
 		newpoint = new point3d(x_new, y_new, z_new);
 		return newpoint;
 	}
 	public void point_move(int xp, int yp, int zp)
-    {
+	{
 		this.x += xp;
 		this.y += yp;
 		this.z += zp;
-    }
-	public void point_move(int param) {
+	}
+	public void point_move(int param)
+	{
 		this.x += param;
 		this.y += param;
 		this.z += param;
@@ -153,7 +174,7 @@ class Program
 			pos1 = new point3d();
 		}
 		else if (a == 1)
-        {
+		{
 			Console.WriteLine("Введите число с точкой, дробная часть которого равна координатам Y, а целая - X");
 			decimal x = decimal.Parse(Console.ReadLine());
 			pos1 = new point3d(x);
@@ -182,41 +203,41 @@ class Program
 		Console.WriteLine("_________________________");
 
 		int req = int.Parse(Console.ReadLine());
-        while (req != 0)
-        {
+		while (req != 0)
+		{
 			Console.WriteLine(pos1.showpos(pos1));
 			switch (req)
-            {
-                case 1:
-                    Console.WriteLine("Введите ось, по которой нужно подвинуть объект");
-                    char b = Char.Parse(Console.ReadLine());
-                    while (!"xyz".Contains(b))
-                        Console.WriteLine("Ось может только: x y или z");
-                    Console.WriteLine("Введите насколько надо подвинуть объект");
-                    int c = int.Parse(Console.ReadLine());
-                    pos1.move(b, c);
-                    break;
-                case 2:
-                    Console.WriteLine(pos1.len_rad_vec());
-                    break;
-                case 3:
-                    Console.WriteLine("Введите , чему теперь равен Х");
-                    pos1.X = int.Parse(Console.ReadLine());
-                    break;
-                case 4:
-                    Console.WriteLine("Введите , чему теперь равен Y");
-                    pos1.Y = int.Parse(Console.ReadLine());
-                    break;
-                case 5:
-                    Console.WriteLine("Введите , чему теперь равен Z");
-                    pos1.Z = int.Parse(Console.ReadLine());
-                    break;
-                case 6:
-                    if (pos1.inzone)
-                        Console.WriteLine("Точка находится в зоне, ограниченной треугольником");
-                    else Console.WriteLine("Точка не находится в зоне, ограниченной треугольником");
-                    break;
-                case 7:
+			{
+				case 1:
+					Console.WriteLine("Введите ось, по которой нужно подвинуть объект");
+					char b = Char.Parse(Console.ReadLine());
+					while (!"xyz".Contains(b))
+						Console.WriteLine("Ось может только: x y или z");
+					Console.WriteLine("Введите насколько надо подвинуть объект");
+					int c = int.Parse(Console.ReadLine());
+					pos1.move(b, c);
+					break;
+				case 2:
+					Console.WriteLine(pos1.len_rad_vec());
+					break;
+				case 3:
+					Console.WriteLine("Введите , чему теперь равен Х");
+					pos1.X = int.Parse(Console.ReadLine());
+					break;
+				case 4:
+					Console.WriteLine("Введите , чему теперь равен Y");
+					pos1.Y = int.Parse(Console.ReadLine());
+					break;
+				case 5:
+					Console.WriteLine("Введите , чему теперь равен Z");
+					pos1.Z = int.Parse(Console.ReadLine());
+					break;
+				case 6:
+					if (pos1.inzone)
+						Console.WriteLine("Точка находится в зоне, ограниченной треугольником");
+					else Console.WriteLine("Точка не находится в зоне, ограниченной треугольником");
+					break;
+				case 7:
 					Console.WriteLine("Создана новая точка с координатами равными сумме координат двух других");
 					point3d point4 = pos1.point_move(pos2);
 					Console.WriteLine("Ее координаты равны" + pos1.showpos(point4));
@@ -249,7 +270,7 @@ class Program
 			Console.Write("Введите команду:");
 			req = int.Parse(Console.ReadLine());
 
-			
+
 
 
 		}
