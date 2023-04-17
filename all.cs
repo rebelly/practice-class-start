@@ -32,25 +32,32 @@ class point3d
 		this.z = 0;
 	}
 	static void cool_class(int x, int y, int z)
-    {
+	{
 		point3d point;
 		bool end = false;
-		if (x % 5 == 0 || y % 5 == 0 || z % 5 == 0) { 
-			if (x > 0)
-            {
-				if (x+y > z)
-                {
-					point = new point3d(x, y, z);
-					end = true;
-                }
-            }
+		try
+		{
+			if (x % 5 == 0 || y % 5 == 0 || z % 5 == 0)
+			{
+				if (x > 0)
+				{
+					if (x + y > z)
+					{
+						point = new point3d(x, y, z);
+						end = true;
+					}
+				}
+			}
+			if (!end) throw new Exception(@"Неверные значения");
 		}
-		if (!end) { 
+		catch (Exception er)
+		{
 			Console.WriteLine("Класс можно создать только если хоть одна из координат делится на 5, координат х положительна, а координат z не превосходит в сумме х и y");
+			Console.WriteLine("Создаю класс по умолчанию");
 			point = new point3d();
 		}
-    }
-	
+	}
+
 	public void move(char axis, int dist)
 	{
 		if (axis == 'x')
