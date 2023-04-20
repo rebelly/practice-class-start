@@ -10,13 +10,13 @@ class point3d
 		this.y = 0;
 		this.z = 4;
 	}
-	public point3d(int x1, int y1, int z1)
+	point3d(int x1, int y1, int z1)
 	{
 		this.x = x1;
 		this.y = y1;
 		this.z = z1;
 	}
-	public point3d(decimal x1)
+	point3d(decimal x1)
 	{
 		int j = -1; // счетчик степени десятки
 		this.x = (int)x1; // х - целая часть ее мы получаем , преобразовывая дробное число в целое
