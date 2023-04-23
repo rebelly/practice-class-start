@@ -1,4 +1,4 @@
-using System;
+using System; // проблема в том что сначала вызывается исключение а только потом вводится десимал, я не знаю как это починить
 class point3d
 {
 	public int x;
@@ -16,11 +16,11 @@ class point3d
 		this.y = y1;
 		this.z = z1;
 	}
-	point3d(decimal x1)
+	static void point3d_dec(decimal x1, out int x, out int y, out int z)
 	{
 		int j = -1; // счетчик степени десятки
-		this.x = (int)x1; // х - целая часть ее мы получаем , преобразовывая дробное число в целое
-		int y = 0;
+		x = (int)x1; // х - целая часть ее мы получаем , преобразовывая дробное число в целое
+		y = 0;
 		decimal rem = x1 - (int)x1; // находим дробную часть
 		while (rem > 0) // дальше находим длину дробной части, перекидывая каждое число из дробной части в целое и отрезая его
 		{
@@ -28,13 +28,26 @@ class point3d
 			rem %= 10;
 			j++;
 		}
-		this.y = (int)((x1 - (int)x1) * (int)Math.Pow(10, j));  // а дальше умножаем дробную часть на 10 в степени длины дробной части
-		this.z = 0;
+		y = (int)((x1 - (int)x1) * (int)Math.Pow(10, j));  // а дальше умножаем дробную часть на 10 в степени длины дробной части
+		z = 0;
 	}
-	static void cool_class(int x, int y, int z)
+	public static point3d cool_class(int x2, int y1, int z1, bool dec = false, decimal x1=0.0m)
 	{
 		point3d point;
 		bool end = false;
+		int x;
+		int y;
+		int z;
+		if (dec)
+        {
+			point3d.point3d_dec(x1, out x, out y, out z);
+        }
+        else
+        {
+			x = x2;
+			y = y1;
+			z = z1; 
+		}
 		try
 		{
 			if (x % 5 == 0 || y % 5 == 0 || z % 5 == 0)
@@ -43,7 +56,8 @@ class point3d
 				{
 					if (x + y > z)
 					{
-						point = new point3d(x, y, z);
+						
+						return new point3d(x, y, z);
 						end = true;
 					}
 				}
@@ -54,8 +68,9 @@ class point3d
 		{
 			Console.WriteLine("Класс можно создать только если хоть одна из координат делится на 5, координат х положительна, а координат z не превосходит в сумме х и y");
 			Console.WriteLine("Создаю класс по умолчанию");
-			point = new point3d();
+			
 		}
+		return new point3d();
 	}
 
 	public void move(char axis, int dist)
@@ -173,8 +188,8 @@ class Program
 		int a;
 		Console.WriteLine("Введите 0, если хотите создать объект в нулевых координатах, 1, если хотите указать х и у с помощью дробного числа, и любое другое число , чтобы ввести конкретные координаты каждой из осей");
 		a = int.Parse(Console.ReadLine());
-		point3d pos2 = new point3d(1, 5, 87); // создаем точки для "корма" ( последние перегруженные метода третьей части практики)
-		point3d pos3 = new point3d(4, 6, -15);
+		point3d pos2 = point3d.cool_class(1, 5, 87); // создаем точки для "корма" ( последние перегруженные метода третьей части практики)
+		point3d pos3 = point3d.cool_class(4, 6, -15);
 		point3d pos1;
 		if (a == 0)
 		{
@@ -183,8 +198,14 @@ class Program
 		else if (a == 1)
 		{
 			Console.WriteLine("Введите число с точкой, дробная часть которого равна координатам Y, а целая - X");
-			decimal x = decimal.Parse(Console.ReadLine());
-			pos1 = new point3d(x);
+			string x = Console.ReadLine();
+			if (decimal.TryParse(x, out decimal number))
+				pos1 = point3d.cool_class(0, 0, 0, true, number);
+            else
+            {
+				Console.WriteLine("Создаю класс по умолчанию");
+				pos1 = point3d.cool_class(-7, 0, 0, true, number); // заведомо вызовется класс по умолчанию 
+			}
 		}
 		else
 		{
@@ -194,7 +215,7 @@ class Program
 			int y1 = int.Parse(Console.ReadLine());
 			Console.Write("\n Введите координаты по оси z");
 			int z1 = int.Parse(Console.ReadLine());
-			pos1 = new point3d(x1, y1, z1);
+			pos1 = point3d.cool_class(x1, y1, z1);
 		}
 		Console.WriteLine("СПИСОК КОМАНД:");
 		Console.WriteLine("0 если хотите подвинуть закончить работу с программой");
