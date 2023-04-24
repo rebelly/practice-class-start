@@ -138,7 +138,8 @@ class point3d
 			}
 			else
 			{
-				Console.WriteLine($"Z должен принимать значения, меньшие чем сумма двумерных координат, в нашем случае это {x + y} ");
+				throw new Exception("Координата Z должна быть меньше суммы координат x и y");
+				
 			}
 		}
 	}
@@ -259,6 +260,9 @@ class Program
 				case 5:
 					Console.WriteLine("Введите , чему теперь равен Z");
 					pos1.Z = int.Parse(Console.ReadLine());
+								catch (Exception er){
+				Console.WriteLine(er.Message);
+			}
 					break;
 				case 6:
 					if (pos1.inzone)
