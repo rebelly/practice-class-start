@@ -1,310 +1,490 @@
-using System; 
-class point3d
-{
-	public int x;
-	public int y;
-	public int z;
-	public point3d()
-	{
-		this.x = 5;
-		this.y = 0;
-		this.z = 4;
-	}
-	point3d(int x1, int y1, int z1)
-	{
-		this.x = x1;
-		this.y = y1;
-		this.z = z1;
-	}
-	static void point3d_dec(decimal x1, out int x, out int y, out int z)
-	{
-		int j = -1; // счетчик степени десятки
-		x = (int)x1; // х - целая часть ее мы получаем , преобразовывая дробное число в целое
-		y = 0;
-		decimal rem = x1 - (int)x1; // находим дробную часть
-		while (rem > 0) // дальше находим длину дробной части, перекидывая каждое число из дробной части в целое и отрезая его
-		{
-			rem *= 10;
-			rem %= 10;
-			j++;
-		}
-		y = (int)((x1 - (int)x1) * (int)Math.Pow(10, j));  // а дальше умножаем дробную часть на 10 в степени длины дробной части
-		z = 0;
-	}
-	public static point3d cool_class(int x2, int y1, int z1, bool dec = false, decimal x1=0.0m)
-	{
-		point3d point;
-		bool end = false;
-		int x;
-		int y;
-		int z;
-		if (dec)
+using System;
+namespace ConsoleApp1
+{ 
+    // исключения
+    enum month1
+    {
+        Январь = 0,
+        Февраль,
+        Март,
+        Апрель,
+        Май,
+        Июнь,
+        Июль,
+        Август,
+        Сентябрь,
+        Октябрь,
+        Ноябрь,
+        Декабрь
+    }
+    enum days
+    {
+        вс = 0,
+        пн = 1,
+        вт,
+        ср,
+        чт,
+        пт,
+        сб,
+
+    }
+    class temp_table
+    {
+        private month1 month;
+        static int[] month_length = new int[]
         {
-			point3d.point3d_dec(x1, out x, out y, out z);
+           31, 28,31,30,31,30,31,31,30,31,30,31
+        };
+        private int month_n;
+        private int day;
+        private int[,] temp;
+        private int[] maxtemp = { -5, -3, 2, 11, 19, 22, 24, 22, 16, 8, 1, -3 };
+        private int[] mintemp = { -10, -10, -5, 2, 8, 12, 14, 12, 7, 2, -3, -7 };
+        private int month_l;
+        public temp_table()
+        {
+            Random rnd = new Random();
+            this.month_n = rnd.Next(1, 12);
+            this.month = (month1)(month_n);
+            this.day = rnd.Next(0, 7);
+
+            temp = new int[6, 7];
+            this.month_l = month_length[this.month_n];
+            temp_table.gen_mass(out temp, this.day, this.month_l, this.mintemp, this.maxtemp, this.month_n);
+
         }
-        else
+        static void gen_mass(out int[,] temp, int day, int month_l, int[] mintemp, int[] maxtemp, int month_n)
         {
-			x = x2;
-			y = y1;
-			z = z1; 
-		}
-		try
-		{
-			if (x % 5 == 0 || y % 5 == 0 || z % 5 == 0)
-			{
-				if (x > 0)
-				{
-					if (x + y > z)
-					{
-						
-						return new point3d(x, y, z);
-						end = true;
-					}
-				}
-			}
-			if (!end) throw new Exception(@"Неверные значения");
-		}
-		catch (Exception er)
-		{
-			Console.WriteLine("Класс можно создать только если хоть одна из координат делится на 5, координат х положительна, а координат z не превосходит в сумме х и y");
-			Console.WriteLine("Создаю класс по умолчанию");
-			
-		}
-		return new point3d();
-	}
+            Random rnd = new Random();
+            temp = new int[7, 7];
+            int k = 0;
+            bool end = false;
+            int tem;
 
-	public void move(char axis, int dist)
-	{
-		if (axis == 'x')
-		{
-			x += dist;
-		}
-		if (axis == 'y')
-		{
-			y += dist;
-		}
-		if (axis == 'z')
-		{
-			z += dist;
-		}
-	}
-	public string len_rad_vec()
-	{
-		return $"Длина радиус-вектора, считая от начала координат {Math.Round(Math.Sqrt(x * x + y * y + z * z), 4)}";
-	}
-	public string showpos(point3d obj)
-	{
-		return $"Объект  находитесь на координатах: x: {obj.x} y:{obj.y} z:{obj.z}";
-	}
-	public int X
-	{
-		set
-		{
-			if (value > 0)
-			{
-				x = value;
-			}
-			else
-			{
-				Console.WriteLine("Х должен принимать положительные значения ");
-			}
-		}
-	}
-	public int Y
-	{
-		set
-		{
-			if (value > 0 && value <= 100)
-			{
-				y = value;
-			}
-			else if (value > 0 && value > 100)
-			{
-				y = 100;
-			}
-			else
-			{
-				Console.WriteLine("Y должен принимать положительные значения, максимум - 100 ");
-			}
-		}
-	}
-	public int Z
-	{
-		set
-		{
-			if (value <= x + y)
-			{
-				z = value;
-			}
-			else
-			{
-				throw new Exception("Координата Z должна быть меньше суммы координат x и y");
-				
-			}
-		}
-	}
-	public bool inzone
-	{
-		get
-		{
-			if (x <= 10)
-			{
-				if (y >= 2)
-				{
-					if (x <= y) { return true; }
-				}
-			}
-			return false;
-		}
-	}
-	public point3d point_move(point3d point) // сложение координат той точки с которой работаем + координат точки которую передают в кач. параметра в координаты новой 
-	{
-		point3d newpoint;
-		int x_new = x + point.x;
-		int y_new = y + point.y;
-		int z_new = z + point.z;
-		newpoint = new point3d(x_new, y_new, z_new);
-		return newpoint;
-	}
-	public void point_move(int xp, int yp, int zp)
-	{
-		this.x += xp;
-		this.y += yp;
-		this.z += zp;
-	}
-	public void point_move(int param)
-	{
-		this.x += param;
-		this.y += param;
-		this.z += param;
-
-	}
-}
-class Program
-{
+            for (int i = 0; i < temp.GetLength(0); i++)
+            {
+                for (int j = 0; j < temp.GetLength(1); j++)
+                {
+                    temp[i, j] = -1000;
+                }
+            }
+            for (int i = 1; i < temp.GetLength(0); i++)
+            {
+                for (int j = 0; j < temp.GetLength(1); j++)
+                {
+                    if (k >= month_l)
+                    {
+                        end = true;
+                        break;
+                    }
+                    if (i ==1)
+                    {
+                        if (j >= day)
+                        {
+                            tem = rnd.Next(mintemp[month_n], maxtemp[month_n]);
+                            temp[i, j] = tem;
+                            k++;
+                        }
+                        else
+                        {
+                            temp[i, j] = temp_table.NoData;
+                        }
+                    }
+                    else
+                    {
+                        tem = rnd.Next(mintemp[month_n], maxtemp[month_n]);
+                        temp[i, j] = tem;
+                        k++;
+                    }
 
 
-	public static void Main()
-	{
-		int a;
-		Console.WriteLine("Введите 0, если хотите создать объект в нулевых координатах, 1, если хотите указать х и у с помощью дробного числа, и любое другое число , чтобы ввести конкретные координаты каждой из осей");
-		a = int.Parse(Console.ReadLine());
-		point3d pos2 = point3d.cool_class(1, 5, 87); // создаем точки для "корма" ( последние перегруженные метода третьей части практики)
-		point3d pos3 = point3d.cool_class(4, 6, -15);
-		point3d pos1;
-		if (a == 0)
-		{
-			pos1 = new point3d();
-		}
-		else if (a == 1)
-		{
-			Console.WriteLine("Введите число с точкой, дробная часть которого равна координатам Y, а целая - X");
-			string x = Console.ReadLine();
-			if (decimal.TryParse(x, out decimal number))
-				pos1 = point3d.cool_class(0, 0, 0, true, number);
+                }
+                if (end) break;
+            }
+        }
+        public temp_table(int day, int month)
+        {
+            this.day = day;
+            this.month_l = month_length[(int)this.month];
+            temp = new int[7, 7];
+            this.month = (month1)(month);
+            this.month_n = month;
+            temp_table.gen_mass(out temp, this.day, this.month_l, this.mintemp, this.maxtemp, this.month_n);
+
+        }
+        public int biggest_jump()
+        {
+            int res = 0;
+            int prev = -1;
+            for (int i = 0; i < this.temp.GetLength(0); i++)
+            {
+                if (prev != -1000 & this.temp[i, 0] != -1000 & Math.Abs(prev - this.temp[i, 0]) > res) res = Math.Abs(prev - this.temp[i, 0]);
+                for (int j = 0; j < this.temp.GetLength(1) - 1; j++)
+                {
+                    if (this.temp[i, j] != -1000 & this.temp[i, j + 1] != -1000 & Math.Abs(this.temp[i, j] - this.temp[i, j + 1]) > res)
+                    {
+                        res = Math.Abs(this.temp[i, j] - this.temp[i, j + 1]);
+                    }
+
+                }
+                prev = this.temp[i, this.temp.GetLength(1) - 1];
+            }
+            return res;
+        }
+        public void change_talbe(int day2)
+        {
+
+            int tmp;
+            Random rnd = new Random();
+            int[] mas = new int[7];
+            for (int i = 0; i < 7; i++) mas[i] = -1000;
+            int day1 = day2 - this.day;
+            if (day1 > 0)
+            {
+
+                while (day1 > 0)
+                {
+                    for (int i = 0; i < this.temp.GetLength(0) - 1; i++)
+                    {
+                        tmp = this.temp[i, this.temp.GetLength(1) - 1];
+
+                        mas[i] = tmp;
+                        for (int j = this.temp.GetLength(1) - 1; j > 0; j--)
+                        {
+                            this.temp[i, j] = this.temp[i, j - 1];
+
+                        }
+                    }
+                    for (int i = 2; i < this.temp.GetLength(0); i++)
+                    {
+                        
+                           this.temp[i - 1, 0] = mas[i - 2];
+                    }
+
+                    if (mas[mas.Length - 1] != -1000)
+                        this.temp[temp.GetLength(0) - 1, 0] = mas[mas.Length - 1];
+                    else this.temp[temp.GetLength(0) - 1, 0] = mas[mas.Length - 2];
+                    for (int i = 0; i < 7; i++)
+                    {
+                        if (temp[0, i] != -1000) temp[0, i] = -1000;
+                        else break;
+                    }
+                    day1--;
+                } // сдвиг вправо, то есть день меняется в большую сторону
+
+            }
+            else
+            { 
+                day1 = -day1;
+                while (day1 > 0)
+                {
+                    for (int i = 0; i < this.temp.GetLength(0); i++)
+                    {
+                        tmp = this.temp[i, 0];
+                        mas[i] = tmp;
+                        for (int j = 1; j < this.temp.GetLength(1); j++)
+                        {
+                            this.temp[i, j - 1] = this.temp[i, j];
+
+                        }
+
+                    }
+                    for (int i = this.temp.GetLength(0) - 1; i > 0; i--)
+                    {
+                        this.temp[i - 1, this.temp.GetLength(1) - 1] = mas[i];
+                    }
+                    for (int i = this.temp.GetLength(1) - 1; i > 0; i--)
+                    {
+                        if (this.temp[temp.GetLength(0) - 1, i] != -1000)
+                            this.temp[temp.GetLength(0) - 1, i] = -1000;
+                        else break;
+
+                    }
+                    day1--;
+                }
+                // сдвиг влево, то есть если дата становится меньше
+            }
+        }
+        public int biggest_jump(out int day, out int temp)
+        {
+            int res = 0;
+            int prev = -1;
+            day = 1;
+            temp = 0;
+            int k = -1;
+            for (int i = 0; i < this.temp.GetLength(0); i++)
+            {
+                if (prev != -1000) k++;
+                if (prev != -1000 & this.temp[i, 0] != -1000 & Math.Abs(prev - this.temp[i, 0]) > res)
+                {
+                    res = Math.Abs(prev - this.temp[i, 0]);
+                    day = k;
+                    temp = prev;
+                }
+                for (int j = 0; j < this.temp.GetLength(1) - 1; j++)
+                {
+                    if (this.temp[i, j] != -1000) k++;
+                    if (this.temp[i, j] != -1000 & this.temp[i, j + 1] != -1000 & Math.Abs(this.temp[i, j] - this.temp[i, j + 1]) > res)
+                    {
+                        res = Math.Abs(this.temp[i, j] - this.temp[i, j + 1]);
+                        day = k;
+                        temp = this.temp[i, j];
+                    }
+
+                }
+                prev = this.temp[i, this.temp.GetLength(1) - 1];
+            }
+            return res;
+        }
+        public void print_table()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write($"Дневник погоды за месяц: ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write($"{(month1)this.month_n}");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.White;
+
+            for (int i = 1; i < 7; i++)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{(days)i }\t");
+            }
+            Console.Write($"{(days)0 }\t");
+            Console.WriteLine();
+            bool end = false;
+            int k = 0;
+            for (int i = 0; i < (this.temp).GetLength(0); i++)
+            {
+
+                for (int j = 0; j < (this.temp).GetLength(1); j++)
+
+                {
+                    if (k >= 31)
+                    {
+                        end = true;
+                        break;
+                    }
+                    if (this.temp[i, j] != -1000)
+                    {
+                        k++;
+
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write($"{k} ");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write($"{this.temp[i, j]}\t");
+                    }
+                    else Console.Write($"\t");
+                }
+                Console.WriteLine();
+                if (end) break;
+            }
+        }
+        public int Day
+        {
+            get
+            {
+                return day;
+            }
+            set
+            {
+                try
+                {
+                    if (value > 0 & value <= 7)
+                    {
+
+                        day = value - 1;
+
+                    }
+                    else
+                    {
+                        throw new Exception("Нет такого дня недели, выбираю день по умолчанию - понедельник");
+                    }
+                }
+                catch (Exception er)
+                {
+                    change_talbe(0);
+                    day = 1;
+                }
+            }
+        }
+
+        public int Month
+        {
+            get
+            {
+                return (int)this.month;
+            }
+
+        }
+
+        public int[,] Temp
+        {
+            get
+            {
+                return this.temp;
+            }
+        }
+        public int Diary_Days
+        {
+            get
+            {
+                int res = 0;
+                for (int i = 0; i < this.temp.GetLength(0); i++)
+                {
+                    for (int j = 0; j < this.temp.GetLength(1); j++)
+                    {
+                        if (this.temp[i, j] != -1000) res++;
+                    }
+                }
+                return res;
+            }
+        }
+        public int zer_days
+        {
+            get
+            {
+                int res = 0;
+                for (int i = 0; i < this.temp.GetLength(0); i++)
+                {
+                    for (int j = 0; j < this.temp.GetLength(1); j++)
+                    {
+                        if (this.temp[i, j] == 0) res++;
+                    }
+                }
+                return res;
+            }
+        }
+        static int NoData
+        {
+            get
+            {
+                return -1000;
+            }
+        }
+
+
+
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            temp_table table1;
+            Console.WriteLine();
+            int day;
+            int temp;
+            int day_g;
+            int month_g;
+            bool nailed = false;
+            Console.WriteLine("Введите 0 , если хотите ввести номер месяца и первый день месяца вручную и 1, если хотите сделать это автоматически");
+            string a = Console.ReadLine();
+            if (int.TryParse(a, out int x))
+            {
+                if (x == 0)
+                {
+                    Console.WriteLine("Введите месяц, где январь - 1, декабрь - 12");
+                    string month1 = Console.ReadLine();
+                    if (!int.TryParse(month1, out month_g))
+                    {
+                        nailed = true;
+                    }
+                    else
+                    {
+                        if (month_g <= 0 | month_g >= 13)
+                        {
+                            nailed = true;
+                        }
+                    }
+                    Console.WriteLine("Введите первый день, где понедельник - 1, воскресенье - 7");
+                    string day1 = Console.ReadLine();
+                    if (!int.TryParse(day1, out day_g))
+                    {
+                        nailed = true;
+                    }
+                    else
+                    {
+                        if (day_g <= 0 | day_g >= 8)
+                        {
+                            nailed = true;
+                        }
+                    }
+                    if (!nailed)
+                        table1 = new temp_table(day_g - 1, month_g - 1);
+                    else
+                    {
+                        Console.WriteLine("Месяц или первый день были заданы неверно, создаю объект по умолчанию");
+                        table1 = new temp_table();
+                    }
+
+                }
+                else table1 = new temp_table();
+            }
             else
             {
-				Console.WriteLine("Создаю класс по умолчанию");
-				pos1 = point3d.cool_class(-7, 0, 0, true, number); // заведомо вызовется класс по умолчанию 
-			}
-		}
-		else
-		{
-			Console.Write("Введите координаты по оси х");
-			int x1 = int.Parse(Console.ReadLine());
-			Console.Write("\n Введите координаты по оси y");
-			int y1 = int.Parse(Console.ReadLine());
-			Console.Write("\n Введите координаты по оси z");
-			int z1 = int.Parse(Console.ReadLine());
-			pos1 = point3d.cool_class(x1, y1, z1);
-		}
-		Console.WriteLine("СПИСОК КОМАНД:");
-		Console.WriteLine("0 если хотите подвинуть закончить работу с программой");
-		Console.WriteLine("1 если хотите подвинуть объект по конкретной оси");
-		Console.WriteLine("2 если хотите найти длину радиус вектора");
-		Console.WriteLine("3 если хотите пометь значение Х");
-		Console.WriteLine("4 если хотите пометь значение У");
-		Console.WriteLine("5 если хотите пометь значение Z");
-		Console.WriteLine("6 если хотите проверить, находится ли точка в закрашенной зоне");
-		Console.WriteLine("7 если хотите создать точку из суммы двух других");
-		Console.WriteLine("8 если хотите изменить кординаты точки на координаты другой");
-		Console.WriteLine("9 если хотите подвинуть объект по всем осям на конкретное значение");
-		Console.WriteLine("_________________________");
+                Console.WriteLine("Неверно, создаю объект по умолчанию");
+                table1 = new temp_table();
+            }
 
-		int req = int.Parse(Console.ReadLine());
-		while (req != 0)
-		{
-			Console.WriteLine(pos1.showpos(pos1));
-			switch (req)
-			{
-				case 1:
-					Console.WriteLine("Введите ось, по которой нужно подвинуть объект");
-					char b = Char.Parse(Console.ReadLine());
-					while (!"xyz".Contains(b))
-						Console.WriteLine("Ось может только: x y или z");
-					Console.WriteLine("Введите насколько надо подвинуть объект");
-					int c = int.Parse(Console.ReadLine());
-					pos1.move(b, c);
-					break;
-				case 2:
-					Console.WriteLine(pos1.len_rad_vec());
-					break;
-				case 3:
-					Console.WriteLine("Введите , чему теперь равен Х");
-					pos1.X = int.Parse(Console.ReadLine());
-					break;
-				case 4:
-					Console.WriteLine("Введите , чему теперь равен Y");
-					pos1.Y = int.Parse(Console.ReadLine());
-					break;
-				case 5:
-					Console.WriteLine("Введите , чему теперь равен Z");
-					pos1.Z = int.Parse(Console.ReadLine());
-								catch (Exception er){
-				Console.WriteLine(er.Message);
-			}
-					break;
-				case 6:
-					if (pos1.inzone)
-						Console.WriteLine("Точка находится в зоне, ограниченной треугольником");
-					else Console.WriteLine("Точка не находится в зоне, ограниченной треугольником");
-					break;
-				case 7:
-					Console.WriteLine("Создана новая точка с координатами равными сумме координат двух других");
-					point3d point4 = pos1.point_move(pos2);
-					Console.WriteLine("Ее координаты равны" + pos1.showpos(point4));
-
-					break;
-				case 8:
-					Console.WriteLine("Координаты точки, на которые мы будем сдвигать:");
-					Console.WriteLine(pos1.showpos(pos3));
-
-					Console.WriteLine("Точка подвинута на координаты другой точки");
-
-					pos1.point_move(pos3.x, pos3.y, pos3.z);
-					break;
-				case 9:
-					Console.WriteLine("Введите параметр, на который увеличатся все координаты");
-					int par = int.Parse(Console.ReadLine());
-					pos1.point_move(par);
-					break;
-				case 0:
-					break;
-				default:
-					Console.WriteLine("НЕИЗВЕСТНАЯ КОМАНДА");
-					break;
-
-			}
-			Console.WriteLine("_________________________");
-			Console.WriteLine(pos1.showpos(pos1));
-			Console.WriteLine("_________________________");
-
-			Console.Write("Введите команду:");
-			req = int.Parse(Console.ReadLine());
+            string req;
+            do
+            {
 
 
 
 
-		}
-	}
+                Console.WriteLine();
+                table1.print_table();
+                Console.WriteLine();
+                Console.Write($"Количество дней в дневнике погоды за месяц: ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{table1.Diary_Days} \n");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"Количество дней в дневнике погоды, когда темперпатура была 0 градусов: ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{table1.zer_days} \n");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"Максимальный перепад температуры составил: ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{table1.biggest_jump()} \n");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"Максимальный перепад температуры составил: ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{table1.biggest_jump(out day, out temp)}");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($". Это произошло ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{day}");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($" числа, в тот день температура была равна ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{temp} \n");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("Список команд:");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("Введите ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("1");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(", если хотите поменять дату первого дня месяца \n");
+                Console.Write("Введите ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("0");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(", если хотите завершить работу с программой \n");
+                req = Console.ReadLine();
+                if (req == "1")
+                {
+                    Console.WriteLine("Введите номер дня недели, который равен первому дню месяца, где 1 - понедельник, 7 - воскресенье");
+                    string tr = Console.ReadLine();
+                    if (int.TryParse(tr, out int ok)) {
+                        table1.Day = ok;
+
+                    }
+                }
+            }
+            while (req != "0");
+        }
+    }
 }
