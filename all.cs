@@ -1,7 +1,7 @@
 using System;
 namespace ConsoleApp1
 { 
-    // исключения
+    
     enum month1
     {
         Январь = 0,
